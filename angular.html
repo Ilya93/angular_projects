@@ -33,7 +33,7 @@
           link: function($scope,$element) {
             $scope.$watch('model', function(value) {
               if($scope.model !== 0){
-                $scope.UserCard = RandomUser.getdata('RandomUser');
+                $scope.UserCard = RandomUser.getdata();
                 $('#randomUserCard').children().remove();
                 angular.element($('#randomUserCard')).append($compile('<div><img class ="img-circle" src = "{{UserCard.picture.medium}}"></div><div><strong>Name: </strong>{{UserCard.name.first}} {{UserCard.name.last}}</div><div><strong>User name: </strong>{{UserCard.username}}</div><div><strong>E-mail: </strong>{{UserCard.email}}</div><div><strong>Adress: </strong>{{UserCard.location.street}}, {{UserCard.location.city}}, {{UserCard.location.state}} {{UserCard.location.zip}}</div><div><strong>Cell phone number </strong>{{UserCard.cell}}</div>')($scope));
               }
