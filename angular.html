@@ -1,6 +1,7 @@
   <!DOCTYPE html>
   <html lang="en-US">
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
   <link rel="stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
   <body>
@@ -18,6 +19,12 @@
   };
   });
   app.controller('userCtrl', function($scope, RandomUser) {
+    $scope.loadData = function() {
+      RandomUser().success(function(data) {
+        $scope.obj = data;
+        $scope.show = true;
+      });
+    };
   });
   app.directive('usercard', function( ) {
     return {
@@ -25,24 +32,14 @@
       scope: { 
         UserCard: '=user' 
       },
-      template: ' <div><img class ="img-circle" src = "{{UserCard.picture.medium}}"></div><div><strong>Name: </strong>{{UserCard.name.first}} {{UserCard.name.last}}</div><div><strong>User name: </strong>{{UserCard.username}}</div><div><strong>E-mail: </strong>{{UserCard.email}}</div><div><strong>Adress: </strong>{{UserCard.location.street}}, {{UserCard.location.city}}, {{UserCard.location.state}} {{UserCard.location.zip}}</div><div><strong>Cell phone number </strong>{{UserCard.cell}}</div>'
+      template: ' <div><img class ="img-circle" ng-src = "{{UserCard.picture.medium}}"></div><div><strong>Name: </strong>{{UserCard.name.first}} {{UserCard.name.last}}</div><div><strong>User name: </strong>{{UserCard.username}}</div><div><strong>E-mail: </strong>{{UserCard.email}}</div><div><strong>Adress: </strong>{{UserCard.location.street}}, {{UserCard.location.city}}, {{UserCard.location.state}} {{UserCard.location.zip}}</div><div><strong>Cell phone number </strong>{{UserCard.cell}}</div>'
     };
   });
-  app.directive('app', ['$compile', 'RandomUser',  function($compile,RandomUser) {
+  app.directive('app', function() {
     return {
-      link: function($scope,element, attr) {
-        $scope.$watch('obj', function(obj) {
-        element.html('<div class = "container"><h2>Angular</h2><h2>Random user</h2><button class="btn btn-success">Get New User</button><div id = "randomUserCard" class = "row"><usercard ng-show="show" user = "obj.results[0].user"></usercard></div></div>');
-        $compile(element.contents())($scope);
-        });
-        element.bind("click", function(){
-          RandomUser().success(function(data) {
-            $scope.obj = data;
-            $scope.show = true;
-          });
-        });
-      }
+      restrict: 'E',
+      template:'<div class = "container"><h2>Angular</h2><h2>Random user</h2><button ng-click="loadData()" class="btn btn-success">Get New User</button><div id = "randomUserCard" class = "row"><usercard ng-show="show" user = "obj.results[0].user"></usercard></div></div>'
     }
-  }]);
+  });
   </script>
   </html>
