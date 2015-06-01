@@ -11,47 +11,39 @@
   </body>
   <script type="text/javascript"> 
   var app = angular.module('myApp', []);
-  app.factory('RandomUser', function(){
+  app.factory('RandomUser', function($http) {
+  var data = null;
+  return function() {
+      data = $http.get('http://api.randomuser.me/');
+      return data;
+  };
+  });
+  app.controller('userCtrl', function($scope, RandomUser) {
+  });
+  app.directive('usercard', function( ) {
     return {
-      getdata : function(){
-        var result = '';
-        $.ajax({
-        url: 'http://api.randomuser.me/',
-        dataType: 'json',
-        async: false,
-        success: function(data){
-          result = data.results[0].user;
-        }
+      restrict: 'E',
+      scope: { 
+        UserCard: '=user' 
+      },
+      template: ' <div><img class ="img-circle" src = "{{UserCard.picture.medium}}"></div><div><strong>Name: </strong>{{UserCard.name.first}} {{UserCard.name.last}}</div><div><strong>User name: </strong>{{UserCard.username}}</div><div><strong>E-mail: </strong>{{UserCard.email}}</div><div><strong>Adress: </strong>{{UserCard.location.street}}, {{UserCard.location.city}}, {{UserCard.location.state}} {{UserCard.location.zip}}</div><div><strong>Cell phone number </strong>{{UserCard.cell}}</div>'
+    };
+  });
+  app.directive('app', ['$compile', 'RandomUser',  function($compile,RandomUser) {
+    return {
+      link: function($scope,element, attr) {
+        $scope.$watch('obj', function(obj) {
+        element.html('<div class = "container"><h2>Angular</h2><h2>Random user</h2><button class="btn btn-success">Get New User</button><div id = "randomUserCard" class = "row"><usercard ng-show="show" user = "obj.results[0].user"></usercard></div></div>');
+        $compile(element.contents())($scope);
         });
-        return result;
+        element.bind("click", function(){
+          RandomUser().success(function(data) {
+            $scope.obj = data;
+            $scope.show = true;
+          });
+        });
       }
     }
-  }); 
-  app.directive('usercard', ['$compile','RandomUser',function($compile, RandomUser) {
-      return {
-          restrict: 'E',
-          link: function($scope,$element) {
-            $scope.$watch('model', function(value) {
-              if($scope.model !== 0){
-                $scope.UserCard = RandomUser.getdata();
-                $('#randomUserCard').children().remove();
-                angular.element($('#randomUserCard')).append($compile('<div><img class ="img-circle" src = "{{UserCard.picture.medium}}"></div><div><strong>Name: </strong>{{UserCard.name.first}} {{UserCard.name.last}}</div><div><strong>User name: </strong>{{UserCard.username}}</div><div><strong>E-mail: </strong>{{UserCard.email}}</div><div><strong>Adress: </strong>{{UserCard.location.street}}, {{UserCard.location.city}}, {{UserCard.location.state}} {{UserCard.location.zip}}</div><div><strong>Cell phone number </strong>{{UserCard.cell}}</div>')($scope));
-              }
-            });
-          }
-       }
   }]);
-  app.directive('app', function() {
-    return {
-          restrict: 'E',
-          template: ' <div class = "container"><h2>Angular</h2><h2>Random user</h2><button ng-click="GetUser()" class="btn btn-success">Get New User</button><div id = "randomUserCard" class = "row"><usercard user = "User{{model}}"></usercard></div></div>',
-        }
-      });
-  app.controller('userCtrl', function($scope) {
-      $scope.model = 0;
-      $scope.GetUser = function() {
-        $scope.model = $scope.model +1;
-      };
-  });
   </script>
   </html>
