@@ -4,7 +4,7 @@
   <link rel="stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
   <body>
-  <div ng-app="myApp" ng-controller="userCtrl">
+  <div ng-app="myApp">
     <app></app>
   </div>
   </body>
@@ -37,7 +37,8 @@
   app.directive('app', function() {
     return {
       restrict: 'E',
-      template:'<div class = "container"><h2>Angular</h2><h2>Random user</h2><button ng-click="loadData()" class="btn btn-success">Get New User</button><div id = "randomUserCard" class = "row"><usercard ng-show="show" user = "obj.results[0].user"></usercard></div></div>'
+      template:'<div class = "container"><h2>Angular</h2><h2>Random user</h2><button ng-click="loadData()" class="btn btn-success">Get New User</button><div id = "randomUserCard" class = "row"><usercard ng-show="show" user = "obj.results[0].user"></usercard></div></div>',
+      controller:"userCtrl"
     }
   });
   </script>
